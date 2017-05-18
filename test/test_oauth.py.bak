@@ -93,7 +93,7 @@ class TestOAuth(unittest.TestCase):
                      for k in ['oauth_nonce', 'oauth_timestamp']}
 
         auth = generate_req_headers(req, app, client, **overrides)
-        self.assertIn('Authorization', list(auth.keys()))
+        self.assertIn('Authorization', auth.keys())
         self.assertEqual(auth['Authorization'], expected)
 
 

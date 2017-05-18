@@ -22,7 +22,7 @@ SLUG_INFIX_RE = re.compile(r"""^(?:[A-Za-z]*/)?
 # symbols. The following two dictionaries remap these names.
 NAME_TO_PY_NAME = {"attribute:street_address": "attribute_street_address",
                    "media[]": "media_arr"}
-PY_NAME_TO_NAME = {v: k for k, v in list(NAME_TO_PY_NAME.items())}
+PY_NAME_TO_NAME = {v: k for k, v in NAME_TO_PY_NAME.items()}
 
 
 class NSSentinel:
@@ -47,7 +47,7 @@ def _generate_signature(api_def):
     """
     params = []
 
-    for name, (optionality, _) in list(api_def['params'].items()):
+    for name, (optionality, _) in api_def['params'].items():
         name = NAME_TO_PY_NAME.get(name, name)
 
         if optionality == 'REQUIRED':
@@ -63,7 +63,7 @@ def _generate_signature(api_def):
 def _generate_doc_str(api_def, line_width=70, indent_width=4):
     lines = textwrap.wrap(api_def['desc'], line_width) + [""]
 
-    for k, (optionality, desc) in list(api_def['params'].items()):
+    for k, (optionality, desc) in api_def['params'].items():
         lines.append(k + ":\n")
 
         body = "({}) {}".format(optionality, desc)
@@ -89,7 +89,7 @@ def _update_params_ordering_required_first(api_def):
     which a required parameter comes after an optional one. That's fine for
     the documentation, but it's not okay for a Python signature.
     """
-    t1, t2 = tee(list(api_def['params'].items()))
+    t1, t2 = tee(api_def['params'].items())
     kv_pairs = chain((p for p in t1 if p[1][0] == 'REQUIRED'),
                      (p for p in t2 if p[1][0] != 'REQUIRED'))
     api_def['params'] = OrderedDict(kv_pairs)
@@ -97,7 +97,7 @@ def _update_params_ordering_required_first(api_def):
 
 def _bind_sig(signature, *args, **kwargs):
     return {PY_NAME_TO_NAME.get(k, k): v
-            for k, v in list(signature.bind(*args, **kwargs).arguments.items())
+            for k, v in signature.bind(*args, **kwargs).arguments.items()
             if v is not NOT_SPECIFIED}
 
 
@@ -232,7 +232,7 @@ class TwitterAPI:
         # each family is the simplest. The str and repr encodings are easy to
         # grok from the REPL. And, the user is free to add end remove methods
         # to each family at will.
-        for family_name, obj_dict in list(families.items()):
+        for family_name, obj_dict in families.items():
             self.__dict__[family_name] = type(family_name, (object,), obj_dict)
 
 
